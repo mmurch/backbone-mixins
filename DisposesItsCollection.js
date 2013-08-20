@@ -1,10 +1,12 @@
-(function(){
+Backbone.mixins = Backbone.mixins || {};
+
+(function(mixins){
 
 	// semi-deprecated, there are better ways to solve this problem
-	Backbone.DisposesItsCollection = {
+	mixins.DisposesItsCollection = {
 		onDispose: function(){
 			_(this).safeGet('collection.onDispose');
 		}
 	};
 
-})();
+})(Backbone.mixins);

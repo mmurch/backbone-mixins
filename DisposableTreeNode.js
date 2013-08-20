@@ -1,6 +1,8 @@
-(function(){
+Backbone.mixins = Backbone.mixins || {};
 
-	Backbone.DisposableTreeNode = {
+(function(mixins){
+
+	mixins.DisposableTreeNode = {
 
 		_children: {},
 
@@ -48,4 +50,4 @@
 		}
 	};
 
-})();
+})(Backbone.mixins);

@@ -1,6 +1,8 @@
-(function(){
+Backbone.mixins = Backbone.mixins || {};
 
-	Backbone.DisposesAsView = {
+(function(mixins){
+
+	mixins.DisposesAsView = {
 		onDispose: function(){
 			// just in case
 			this.unbind();
@@ -11,4 +13,4 @@
 		}
 	};
 
-})();
+})(Backbone.mixins);
