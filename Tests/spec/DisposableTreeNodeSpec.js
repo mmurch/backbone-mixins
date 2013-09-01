@@ -7,7 +7,7 @@
 
 
         beforeEach(function(){
-            dtNode = _.extend(dtNodeBaseWithHandler, Backbone.mixins.DisposableTreeNode);
+            dtNode = new dtNodeBaseWithHandler();
         });
 
         it('invokes dispose handler when dispose is invoked', function(){
@@ -65,32 +65,70 @@
 
         });
 
+        it('maintains order when adding and disposing', function(){
+
+            var children = _.map(_.range(0,8), function(){
+                return getExampleChild();
+            });
+
+            var cids = _.map(children, function(child){
+                return child.child.cid;
+            });
+
+            spyOn(children[1].child, 'dispose');
+
+            dtNode.addChildren(_(children).take(3));
+
+            expect(dtNode._orderedChildIds).toEqual(_(cids).take(3));
+
+            dtNode.disposeChild(cids[1]);
+
+            expect(children[1].child.dispose).toHaveBeenCalled();
+
+            expect(dtNode._orderedChildIds).toEqual(
+                _.chain(cids)
+                    .take(3)
+                    .without(cids[1])
+                    .value()
+            );
+
+            expect(dtNode._children[cids[1]]).toBeUndefined();
+
+            dtNode.addChild(children[5].child);
+
+            expect(dtNode._orderedChildIds).toEqual(
+                _.chain(cids)
+                    .take(3)
+                    .without(cids[1])
+                    .value()
+                    .concat([cids[5]])
+            );
+
+        });
+
+        it('identifies as disposabletreenode', function(){
+            expect(dtNode.isDisposableTreeNode).toBeTruthy();
+        });
+
 
         // helpers
-        var dtNodeBaseWithHandler = {
+        var dtNodeBaseWithHandler = Brace.View.extend({
+            mixins: [Backbone.mixins.DisposableTreeNode],
             onDispose: function(){}
-        };
+        });
 
-        var getExampleChild = (function(){
+        var getExampleChild = function(data){
 
-            var id = 0;
-
-            return function(){
-
-                return {
-                    child: _.extend({
-                            cid: ++id,
-                            other: 'wow'
-                        },
-                        dtNodeBaseWithHandler,
-                        _.clone(Backbone.mixins.DisposableTreeNode)),
-                    data: {
-                        someOtherData: 6
-                    }
-                };
-
+            return {
+                child: _.extend(
+                    new dtNodeBaseWithHandler()
+                ),
+                data: data || {
+                    someOtherData: 6
+                }
             };
-        })();
+
+        };
 
     });
 

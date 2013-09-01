@@ -2,39 +2,56 @@ Backbone.mixins = Backbone.mixins || {};
 
 (function(mixins){
 
+    var RM = {
+            byAppend: 'byAppend',
+            byAssign: 'byAssign'
+        },
+        EV = {
+            preRender: 'preRender',
+            postRender: 'postRender'
+        };
+
+
 	mixins.ListView = {
 
-		renderStrategy: 'byAppend',
+        mixins: [ Backbone.mixins.DisposableTreeNode ],
+
+        renderMethod: RM.byAppend,
 
 		render: function () {
 
 			var __this = _(this);
 
-			__this.result('preRender');
+			__this.result(EV.preRender);
 
-			__this.result(this.renderStrategy);
+			__this.result(this.renderMethod);
 
-			__this.result('postRender');
+			__this.result(EV.postRender);
 
 			return this;
 		},
 
-		preRender: function(){
-			if (this.renderStrategy === 'byAppend'){
-				this.disposeChildren();
-			}
-		},
-
 		byAppend: function () {
 
-			// TODO: can I seed this with this.template.render()?
-			var frag = document.createDocumentFragment();
+            var hasOwnTemplate = !!this.template;
 
-			// TODO: fix use of _children
-			this._children.each(function(view){
-				frag.appendChild(view
-					.render()
-					.el
+            /**
+             * if this listview has its own template
+             * then we will render it to seed our
+             * fragment with it and not use documentFragment
+             * @type {*|jQuery|HTMLElement}
+             */
+			var frag = hasOwnTemplate
+                ? $(this.template.render(this.viewModel))
+                : document.createDocumentFragment();
+
+			var appendMethod = hasOwnTemplate
+                ? 'append'
+                : 'appendChild';
+
+            _(this._orderedChildIds).each(function(viewId){
+				frag[appendMethod](
+                    this._children[viewId].render().el
 				);
 			}, this);
 
@@ -43,10 +60,11 @@ Backbone.mixins = Backbone.mixins || {};
 			return this;
 		},
 
-		// if using the `byAssign` render strategy, assignment
-		// should be overridden to the jQuery selector that 
-		// returns the elements to assign the child views 
-		assignment: '',
+		// if using the `byAssign` render strategy, attribute `assignment`
+		// should be set to the jQuery selector that
+		// returns the elements to assign the child views
+
+        assignment: '',
 
 		byAssign: function () {
 
@@ -55,8 +73,10 @@ Backbone.mixins = Backbone.mixins || {};
 			// why not frag this
 			this.$el.html(this.template.render(this.viewModel));
 
-			this.$el.find('.item').each(function(i){
-				_this.views[i].setElement($(this)).render();
+			this.$el.find(this.getAssignment()).each(function(i){
+				_this._children[this._orderedChildIds[i]]
+                    .setElement($(this))
+                    .render();
 			});
 		}
 	};

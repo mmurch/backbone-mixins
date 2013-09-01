@@ -22,17 +22,20 @@ Backbone.mixins = Backbone.mixins || {};
          * ```
          */
 
-        // children to be accessed by cid
-		// _children: {},
+        initialize: function(){
 
-        // separate storage of cids in the order in which they were added to guarantee order
-        // _orderedChildIds: [],
+            // children to be accessed by cid
+            this._children = {};
+
+            // separate storage of cids in the order in which they were added to guarantee order
+            this._orderedChildIds = [];
+
+        },
 
         // helper isOfType bool
 		isDisposableTreeNode: true,
 
 		hasChildren: function(){
-            this._ensureChildrenInitialized();
 			return _(this._children).isEmpty();
 		},
 
@@ -126,13 +129,7 @@ Backbone.mixins = Backbone.mixins || {};
 			});
 			this._children = {};
 			this._orderedChildIds = [];
-		},
-
-
-        _ensureChildrenInitialized: function(){
-            this._children = this._children || {};
-            this._orderedChildIds = this._orderedChildIds || [];
-        }
+		}
 	};
 
 })(Backbone.mixins);
