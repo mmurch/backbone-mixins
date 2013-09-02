@@ -43,9 +43,9 @@ Backbone.mixins = Backbone.mixins || {};
             }
 
             // add all the rendered children to the fragment
-            _(this._orderedChildIds).each(function(viewId){
+            _(this.children()).each(function(child){
 				frag.appendChild(
-                    this._children[viewId].child.render().el
+                    child.render().el
 				);
 			}, this);
 

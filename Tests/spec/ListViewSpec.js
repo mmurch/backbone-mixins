@@ -16,7 +16,7 @@
         postRender: function(){},
         template: {
             render: function(viewModel){
-                return '<div><h2>Header 2 and ' + viewModel.stuff + '</h2></div>';
+                return '<h2>Header 2 and ' + viewModel.stuff + '</h2>';
             }
         }
     });

@@ -24,12 +24,12 @@
         it('invokes dispose handler on all children when disposed', function(){
 
             var children = _.map(_.range(0, 8), function(){
-                return getExampleChild();
+                return new dtNodeBaseWithHandler();
             });
 
             _(children).each(function(child){
-                spyOn(child.child, 'onDispose').andCallThrough();
-                spyOn(child.child, 'dispose').andCallThrough();
+                spyOn(child, 'onDispose').andCallThrough();
+                spyOn(child, 'dispose').andCallThrough();
 
             });
 
@@ -38,8 +38,8 @@
             dtNode.dispose();
 
             _(children).each(function(child){
-                expect(child.child.dispose).toHaveBeenCalled();
-                expect(child.child.onDispose).toHaveBeenCalled();
+                expect(child.dispose).toHaveBeenCalled();
+                expect(child.onDispose).toHaveBeenCalled();
             });
 
         });
@@ -47,19 +47,19 @@
         it('stores children in the correct format', function(){
 
             // using addChild
-            var child = getExampleChild();
-            dtNode.addChild(child.child, child.data);
-            expect(dtNode._children[child.child.cid]).toEqual(child);
+            var child = new dtNodeBaseWithHandler();
+            dtNode.addChild(child);
+            expect(dtNode._children[child.cid]).toEqual(child);
 
             // using addChildren
-            child = getExampleChild();
+            child = new dtNodeBaseWithHandler();
             dtNode.addChildren(child);
-            expect(dtNode._children[child.child.cid]).toEqual(child);
+            expect(dtNode._children[child.cid]).toEqual(child);
 
             // using addChildren with array
-            child = getExampleChild();
+            child = new dtNodeBaseWithHandler();
             dtNode.addChildren([child]);
-            expect(dtNode._children[child.child.cid]).toEqual(child);
+            expect(dtNode._children[child.cid]).toEqual(child);
 
             expect(dtNode._orderedChildIds.length).toEqual(3);
 
@@ -68,14 +68,14 @@
         it('maintains order when adding and disposing', function(){
 
             var children = _.map(_.range(0,8), function(){
-                return getExampleChild();
+                return new dtNodeBaseWithHandler();
             });
 
             var cids = _.map(children, function(child){
-                return child.child.cid;
+                return child.cid;
             });
 
-            spyOn(children[1].child, 'dispose');
+            spyOn(children[1], 'dispose');
 
             dtNode.addChildren(_(children).take(3));
 
@@ -83,7 +83,7 @@
 
             dtNode.disposeChild(cids[1]);
 
-            expect(children[1].child.dispose).toHaveBeenCalled();
+            expect(children[1].dispose).toHaveBeenCalled();
 
             expect(dtNode._orderedChildIds).toEqual(
                 _.chain(cids)
@@ -94,7 +94,7 @@
 
             expect(dtNode._children[cids[1]]).toBeUndefined();
 
-            dtNode.addChild(children[5].child);
+            dtNode.addChild(children[5]);
 
             expect(dtNode._orderedChildIds).toEqual(
                 _.chain(cids)
@@ -116,19 +116,6 @@
             mixins: [Backbone.mixins.DisposableTreeNode],
             onDispose: function(){}
         });
-
-        var getExampleChild = function(data){
-
-            return {
-                child: _.extend(
-                    new dtNodeBaseWithHandler()
-                ),
-                data: data || {
-                    someOtherData: 6
-                }
-            };
-
-        };
 
     });
 

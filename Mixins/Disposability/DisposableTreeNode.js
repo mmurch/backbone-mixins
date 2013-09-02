@@ -3,24 +3,9 @@ Backbone.mixins = Backbone.mixins || {};
 (function(mixins){
 
     var EVENT_DISPOSE = 'onDispose',
-        FUNC_DISPOSE = 'dispose',
-        DATA_KEY = 'data',
-        CHILD_KEY = 'child';
+        FUNC_DISPOSE = 'dispose';
 
 	mixins.DisposableTreeNode = {
-
-
-        /**
-         * children will be stored in the following format:
-         * ```js
-         *
-         * var childStorage = {
-         *      child: {},    // actual instance of child node
-         *      data: {}    // optional other storage, should be used sparingly and carefully
-         * }
-         *
-         * ```
-         */
 
         initialize: function(){
 
@@ -39,37 +24,27 @@ Backbone.mixins = Backbone.mixins || {};
 			return _(this._children).isEmpty();
 		},
 
+        children: function(){
+            return _.map(this._orderedChildIds, function(id){
+                return this._children[id];
+            }, this);
+        },
+
+
         /**
          * internal version of add child that expects an already
          * constructed child storage object
          * @private
          * @param childStorage see format above
          */
-        _addChild: function(childStorage){
+        addChild: function(child){
 
-            var _cs = _(childStorage).chain(),
-                id = _cs.result(CHILD_KEY)
-                        .result('cid').value() ||
-                    _.identity(
-                        _cs.result(CHILD_KEY).value()
-                    );
+            var id = child.cid || _.identity(child);
 
-            this._children[id] = childStorage;
+            this._children[id] = child;
             this._orderedChildIds.push(id);
         },
 
-        /**
-         * @param child can be any other disposable tree node
-         */
-		addChild: function(child, data){
-
-            var childStorage = {};
-
-            childStorage[CHILD_KEY] = child;
-            childStorage[DATA_KEY] = data;
-
-            this._addChild(childStorage);
-		},
 
         /**
          * @param children may be an array
@@ -86,7 +61,7 @@ Backbone.mixins = Backbone.mixins || {};
 				: Array.prototype.slice.call(arguments);
 
 			_(children).each(function(child){
-				this._addChild(child);
+				this.addChild(child);
 			}, this);
 
 		},
@@ -110,10 +85,8 @@ Backbone.mixins = Backbone.mixins || {};
          * @param childId
          */
         disposeChild: function(childId){
-            _.chain(this._children[childId])
-                .result(CHILD_KEY)
-                .result(FUNC_DISPOSE)
-                .value();
+            _(this._children[childId])
+                .result(FUNC_DISPOSE);
 
             delete this._children[childId];
             this._orderedChildIds = _.without(this._orderedChildIds, childId);
@@ -122,10 +95,7 @@ Backbone.mixins = Backbone.mixins || {};
 
 		disposeChildren: function(){
 			_(this._children).each(function(child){
-				_.chain(child)
-                    .result(CHILD_KEY)
-                    .result(FUNC_DISPOSE)
-                    .value();
+				_(child).result(FUNC_DISPOSE);
 			});
 			this._children = {};
 			this._orderedChildIds = [];
