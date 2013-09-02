@@ -33,36 +33,36 @@ Backbone.mixins = Backbone.mixins || {};
 
 		byAppend: function () {
 
-            var hasOwnTemplate = !!this.template;
+            var hasOwnTemplate = !!this.template,
+                frag = document.createDocumentFragment();
 
-            /**
-             * if this listview has its own template
-             * then we will render it to seed our
-             * fragment with it and not use documentFragment
-             * @type {*|jQuery|HTMLElement}
-             */
-			var frag = hasOwnTemplate
-                ? $(this.template.render(this.viewModel))
-                : document.createDocumentFragment();
+            // if it has its own template we have two
+            // dom manipulations instead of one
+            if (hasOwnTemplate){
+                this.$el.html(this.template.render(this.viewModel));
+            }
 
-			var appendMethod = hasOwnTemplate
-                ? 'append'
-                : 'appendChild';
-
+            // add all the rendered children to the fragment
             _(this._orderedChildIds).each(function(viewId){
-				frag[appendMethod](
-                    this._children[viewId].render().el
+				frag.appendChild(
+                    this._children[viewId].child.render().el
 				);
 			}, this);
 
-			this.$el.html(frag);
-		
+            if (hasOwnTemplate){
+                this.$el.append(frag);
+            }
+            else {
+                this.$el.html(frag);
+            }
+
 			return this;
 		},
 
-		// if using the `byAssign` render strategy, attribute `assignment`
-		// should be set to the jQuery selector that
-		// returns the elements to assign the child views
+        // if using the `byAssign` render strategy, each subview
+        // must have the attribute `assignment` set to the
+        // jQuery selector that returns the elements
+        // to assign the subview
 
         assignment: '',
 
@@ -73,7 +73,7 @@ Backbone.mixins = Backbone.mixins || {};
 			// why not frag this
 			this.$el.html(this.template.render(this.viewModel));
 
-			this.$el.find(this.getAssignment()).each(function(i){
+			this.$el.find(this.assignment).each(function(i){
 				_this._children[this._orderedChildIds[i]]
                     .setElement($(this))
                     .render();
