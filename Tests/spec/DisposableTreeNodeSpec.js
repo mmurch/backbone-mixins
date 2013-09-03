@@ -44,7 +44,7 @@
 
         });
 
-        it('stores children in the correct format', function(){
+        it('stores children correctly', function(){
 
             // using addChild
             var child = new dtNodeBaseWithHandler();
