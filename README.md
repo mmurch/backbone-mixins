@@ -24,7 +24,7 @@ var MyViewClass = Brace.View.extend({
     preRender: function(){
         this.viewModel = {
             some: 'json',
-            for: 'rendering
+            for: 'rendering'
         };
     },
 
@@ -53,14 +53,37 @@ Children are kept track of such that you can dependably iterate through them
 in the order in which they were added. Can be used with other mixins that provide
 typical disposal behavior.
 
-Example usage:
+Example (obviously unrealistic) usage:
 
 ```js
 
 var MyListView = Brace.View.extend({
+    mixins: [ Backbone.mixins.DisposableTreeNode ],
+    render: function(){
+        var subView = new MyItemView();
+        this.addChild(subView);
 
-
+        this.$el.append(subView.render().el);
+    }
 });
+
+var MyItemView = Brace.View.extend({
+    mixins: [ Backbone.mixins.DisposableTreeNode ],
+    render: function(){
+        this.$el.html(this.template.render());
+        return this;
+    },
+    onDispose: function(){
+        this.unbind();
+        this.remove();
+    }
+});
+
+// init
+var list = new MyListView();
+
+// to dispose entire tree
+list.dispose();
 
 ```
 
@@ -73,7 +96,6 @@ for you.
 
 ***Dependencies***
 -	mixins.DisposableTreeNode
--
 
 ***When to use***
 If you have a view with any number of subviews that 
