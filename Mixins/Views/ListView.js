@@ -6,7 +6,7 @@ Backbone.mixins = Backbone.mixins || {};
             byAppend: 'byAppend'
         };
 
-	mixins.ListView = {
+    mixins.ListView = {
 
         renderMethod: RM.byAppend,
 

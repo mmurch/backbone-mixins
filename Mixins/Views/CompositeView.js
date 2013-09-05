@@ -39,9 +39,9 @@ Backbone.mixins = Backbone.mixins || {};
             _.each(this.children(), function(child){
 
                 child.setElement(
-                        this.$el.find(child.assignment)
-                    )
-                    .render();
+                    this.$el.find(child.assignment)
+                )
+                .render();
 
             }, this);
         },
