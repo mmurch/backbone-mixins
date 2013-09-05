@@ -37,6 +37,6 @@ Backbone.mixins = Backbone.mixins || {};
 
             return this;
         }
-	};
+    };
 
 })(Backbone.mixins);
