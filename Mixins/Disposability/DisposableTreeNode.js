@@ -66,6 +66,14 @@ Backbone.mixins = Backbone.mixins || {};
 
 		},
 
+        /**
+         *
+         * @param id
+         */
+        getChild: function(id){
+            return this._children[id];
+        },
+
 
         /**
          * calls dispose on its children and then

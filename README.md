@@ -181,12 +181,11 @@ var MyCompositeView = Brace.View.extend({
     // all you have to do is set your children
     preRender: function(){
 
-        //TODO: abstract away this first render vs second render instantiation stuff
-        if (!hasRendered) {
+        // preventing adding children that already exist
+        if (!this.hasChildren) {
             this.addChild(
                 new MySubView();
             );
-            this.hasRendered: true;
         }
 
     }
