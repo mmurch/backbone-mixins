@@ -5,7 +5,7 @@ Backbone.mixins = Backbone.mixins || {};
     var EVENT_DISPOSE = 'onDispose',
         FUNC_DISPOSE = 'dispose';
 
-	mixins.DisposableTreeNode = {
+    mixins.DisposableTreeNode = {
 
         initialize: function(){
 
@@ -18,11 +18,11 @@ Backbone.mixins = Backbone.mixins || {};
         },
 
         // helper isOfType bool
-		isDisposableTreeNode: true,
+        isDisposableTreeNode: true,
 
-		hasChildren: function(){
-			return _(this._children).isEmpty();
-		},
+        hasChildren: function(){
+            return _(this._children).isEmpty();
+        },
 
         children: function(){
             return _.map(this._orderedChildIds, function(id){
@@ -54,17 +54,17 @@ Backbone.mixins = Backbone.mixins || {};
          *
          * expects children as formatted in the comments above
          */
-		addChildren: function(children){
+        addChildren: function(children){
 
-			children = _.isArray(children)
-				? children
-				: Array.prototype.slice.call(arguments);
+            children = _.isArray(children)
+                ? children
+                : Array.prototype.slice.call(arguments);
 
-			_(children).each(function(child){
-				this.addChild(child);
-			}, this);
+            _(children).each(function(child){
+                this.addChild(child);
+            }, this);
 
-		},
+        },
 
         /**
          *
@@ -74,19 +74,19 @@ Backbone.mixins = Backbone.mixins || {};
             return this._children[id];
         },
 
-
         /**
          * calls dispose on its children and then
          * its own dispose handler
          */
-		dispose: function () {
+        dispose: function () {
 
-			var __this = _(this);
+            var __this = _(this);
 
-			this.disposeChildren();
+            this.disposeChildren();
 
-			__this.result(EVENT_DISPOSE);
-		},
+            __this.result(EVENT_DISPOSE);
+
+        },
 
         /**
          * disposes of a particular child by its identifier
@@ -100,14 +100,13 @@ Backbone.mixins = Backbone.mixins || {};
             this._orderedChildIds = _.without(this._orderedChildIds, childId);
         },
 
-
-		disposeChildren: function(){
-			_(this._children).each(function(child){
+        disposeChildren: function(){
+            _(this._children).each(function(child){
 				_(child).result(FUNC_DISPOSE);
-			});
-			this._children = {};
-			this._orderedChildIds = [];
-		}
-	};
+            });
+            this._children = {};
+            this._orderedChildIds = [];
+        }
+    };
 
 })(Backbone.mixins);
