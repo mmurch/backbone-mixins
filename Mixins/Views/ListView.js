@@ -10,7 +10,7 @@ Backbone.mixins = Backbone.mixins || {};
 
         renderMethod: RM.byAppend,
 
-		byAppend: function () {
+        byAppend: function () {
 
             var hasOwnTemplate = !!this.template,
                 frag = document.createDocumentFragment();
@@ -25,7 +25,7 @@ Backbone.mixins = Backbone.mixins || {};
             _(this.children()).each(function(child){
 				frag.appendChild(
                     child.render().el
-				);
+                );
 			}, this);
 
             if (hasOwnTemplate){
@@ -35,8 +35,8 @@ Backbone.mixins = Backbone.mixins || {};
                 this.$el.html(frag);
             }
 
-			return this;
-		}
+            return this;
+        }
 	};
 
 })(Backbone.mixins);
