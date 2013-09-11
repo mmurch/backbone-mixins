@@ -110,6 +110,19 @@
             expect(dtNode.isDisposableTreeNode).toBeTruthy();
         });
 
+        it('reports hasChildren accurately', function(){
+            expect(dtNode.hasChildren()).toBeFalsy();
+
+            var child = new dtNodeBaseWithHandler();
+            dtNode.addChild(child);
+
+            expect(dtNode.hasChildren()).toBeTruthy();
+
+            dtNode.disposeChildren();
+
+            expect(dtNode.hasChildren()).toBeFalsy();
+        });
+
 
         // helpers
         var dtNodeBaseWithHandler = Brace.View.extend({

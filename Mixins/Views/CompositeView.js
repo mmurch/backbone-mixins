@@ -41,10 +41,14 @@ Backbone.mixins = Backbone.mixins || {};
 
                 _.each(this.children(), function(child){
 
-                    child.setElement(
-                        this.$el.find(child.assignment)
-                    )
-                    .render();
+                    var $elem = this.$el.find(child.assignment);
+
+                    if (!$elem.length) {
+                        return;
+                    }
+
+                    child.setElement($elem)
+                        .render();
 
                 }, this);
             },
