@@ -8,9 +8,7 @@
 
     var CompositeViewClass = Brace.View.extend({
         mixins: [
-            Backbone.mixins.CompositeView,
-            Backbone.mixins.DisposableTreeNode,
-            Backbone.mixins.PrePostRenderMethod
+            Backbone.mixins.CompositeView
         ]
     });
 

@@ -8,9 +8,7 @@
 
     var ListViewClass = Brace.View.extend({
         mixins: [
-            Backbone.mixins.ListView,
-            Backbone.mixins.DisposableTreeNode,
-            Backbone.mixins.PrePostRenderMethod
+            Backbone.mixins.ListView
         ],
         preRender: function(){
             this.viewModel = {

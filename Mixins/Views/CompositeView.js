@@ -19,50 +19,53 @@ Backbone.mixins = Backbone.mixins || {};
      * @type {{renderMethod: string, byAssign: Function, renderChild: Function}}
      * @dependencies DisposableTreeNode, PrePostRenderMethod
      */
-    mixins.CompositeView = {
+    mixins.CompositeView = _.extend({},
+        Backbone.mixins.DisposesAsView,
+        Backbone.mixins.PrePostRenderMethod,
+        {
 
-        renderMethod: RM.byAssign,
+            renderMethod: RM.byAssign,
 
-        /**
-         *
-         * Render all the child views using either existing dom or
-         * the template as the base. blasts out the existing html every time
-         * if using a template
-         *
-         */
-        byAssign: function () {
+            /**
+             *
+             * Render all the child views using either existing dom or
+             * the template as the base. blasts out the existing html every time
+             * if using a template
+             *
+             */
+            byAssign: function () {
 
-            if (this.template){
-                this.$el.html(this.template.render(this.viewModel));
+                if (this.template){
+                    this.$el.html(this.template.render(this.viewModel));
+                }
+
+                _.each(this.children(), function(child){
+
+                    child.setElement(
+                        this.$el.find(child.assignment)
+                    )
+                    .render();
+
+                }, this);
+            },
+
+            /**
+             *
+             * Render an individual child view instead of all
+             *
+             * @param id should be the view's cid
+             */
+            renderChild: function(id) {
+
+                var child = this.getChild(id);
+
+                if (child) {
+                    child.render();
+                }
+
+                return this;
             }
 
-            _.each(this.children(), function(child){
-
-                child.setElement(
-                    this.$el.find(child.assignment)
-                )
-                .render();
-
-            }, this);
-        },
-
-        /**
-         *
-         * Render an individual child view instead of all
-         *
-         * @param id should be the view's cid
-         */
-        renderChild: function(id) {
-
-            var child = this.getChild(id);
-
-            if (child) {
-                child.render();
-            }
-
-            return this;
-        }
-
-    };
+        });
 
 })(Backbone.mixins);
