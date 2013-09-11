@@ -21,7 +21,7 @@ Backbone.mixins = Backbone.mixins || {};
         isDisposableTreeNode: true,
 
         hasChildren: function(){
-            return _(this._children).isEmpty();
+            return !_(this._children).isEmpty();
         },
 
         children: function(){
